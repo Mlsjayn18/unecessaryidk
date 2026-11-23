@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">S
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Message</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #8e2de2 0%, #4a00e0 25%, #ff006e 75%, #ff1744 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(199, 21, 133, 0.4) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(219, 39, 119, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 60% 80%, rgba(142, 45, 226, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 30% 70%, rgba(255, 0, 110, 0.2) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .petals {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+        
+        .petal {
+            position: absolute;
+            font-size: 14px;
+            color: rgba(255, 192, 203, 0.8);
+            animation: fall 8s linear infinite;
+        }
+        
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(199, 21, 133, 0.2);
+            border: 1px solid rgba(255, 192, 203, 0.3);
+            padding: 50px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            z-index: 3;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .password-container {
+            display: block;
+        }
+        
+        .message-container {
+            display: none;
+            max-width: 900px;
+            padding: 60px;
+        }
+        
+        .lock-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #c7155d, #db2777, #8e2de2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 2.5rem;
+            color: white;
+            box-shadow: 0 15px 35px rgba(199, 21, 133, 0.4);
+        }
+        
+        .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #c7155d, #db2777, #8e2de2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+        
+        .password-input {
+            width: 100%;
+            padding: 18px 24px;
+            border: 2px solid #f0f0f0;
+            border-radius: 16px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 24px;
+            font-family: 'Inter', sans-serif;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        
+        .password-input:focus {
+            border-color: #c7155d;
+            box-shadow: 0 0 0 4px rgba(199, 21, 133, 0.2);
+            background: rgba(255, 255, 255, 1);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #c7155d, #db2777, #8e2de2);
+            color: white;
+            border: none;
+            padding: 18px 48px;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 25px rgba(199, 21, 133, 0.4);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(199, 21, 133, 0.5);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .error-message {
+            color: #ff4757;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .error-message.show {
+            opacity: 1;
+        }
+        
+        .message-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, #c7155d, #db2777, #8e2de2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 50px;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+        
+        .message-content {
+            font-size: 1.1rem;
+            line-height: 1.9;
+            color: #444;
+            text-align: left;
+            background: linear-gradient(135deg, rgba(199, 21, 133, 0.08), rgba(219, 39, 119, 0.05));
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(199, 21, 133, 0.15);
+            font-weight: 400;
+            box-shadow: 0 10px 30px rgba(199, 21, 133, 0.15);
+        }
+        
+        .romantic-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 20px;
+            margin: 40px auto;
+            display: block;
+            box-shadow: 0 15px 40px rgba(199, 21, 133, 0.3);
+            border: 3px solid rgba(255, 192, 203, 0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .romantic-image:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 50px rgba(199, 21, 133, 0.4);
+        }
+        
+        .signature {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #c7155d, #db2777, #8e2de2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-top: 40px;
+            text-align: right;
+            font-weight: 500;
+            font-style: italic;
+        }
+        
+        .decorative-line {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(135deg, #c7155d, #db2777, #8e2de2);
+            margin: 30px auto;
+            border-radius: 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 24px;
+                margin: 10px;
+                border-radius: 20px;
+            }
+            
+            .message-container {
+                padding: 40px 24px;
+            }
+            
+            .title {
+                font-size: 2.2rem;
+            }
+            
+            .message-title {
+                font-size: 2.8rem;
+            }
+            
+            .message-content {
+                font-size: 1rem;
+                padding: 30px 24px;
+                border-radius: 16px;
+            }
+            
+            .lock-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 2rem;
+            }
+            
+            .romantic-image {
+                max-width: 100%;
+                margin: 30px auto;
+                border-radius: 16px;
+                border-width: 2px;
+            }
+        }
+        
+        .fade-in {
+            animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        
+        .shake {
+            animation: shake 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Responsive button sizes */
+        @media (max-width: 480px) {
+            .btn {
+                padding: 8px 20px;
+                font-size: 1rem;
+            }
+        }
+        
+        .btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: all 0.6s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 182, 193, 0.6);
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Audio button */
+
+        .audio-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background-color: #a42c3e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .audio-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .audio-btn i {
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="petals">
+        <div class="petal" style="left: 5%; animation-delay: 0s;">🌸</div>
+        <div class="petal" style="left: 15%; animation-delay: 2s;">🌺</div>
+        <div class="petal" style="left: 25%; animation-delay: 4s;">🌸</div>
+        <div class="petal" style="left: 35%; animation-delay: 1s;">🌹</div>
+        <div class="petal" style="left: 45%; animation-delay: 3s;">🌸</div>
+        <div class="petal" style="left: 55%; animation-delay: 5s;">🌺</div>
+        <div class="petal" style="left: 65%; animation-delay: 1.5s;">🌸</div>
+        <div class="petal" style="left: 75%; animation-delay: 3.5s;">🌹</div>
+        <div class="petal" style="left: 85%; animation-delay: 2.5s;">🌸</div>
+        <div class="petal" style="left: 95%; animation-delay: 4.5s;">🌺</div>
+    </div>
+
+    <div class="container">
+        <div class="password-container" id="passwordContainer">
+            <div class="lock-icon">🔐</div>
+            <h1 class="title">A Letter Awaits</h1>
+            <div class="decorative-line"></div>
+            <p class="subtitle">Enter the secret phrase to unlock my unsaid words and feelings. </p>
+            <form id="passwordForm">
+                <input 
+                    type="password" 
+                    class="password-input" 
+                    id="passwordInput" 
+                    placeholder="Secret phrase..."
+                    autocomplete="off"
+                >
+                <br>
+                <button type="submit" class="submit-btn">Unlock This</button>
+            </form>
+            <div class="error-message" id="errorMessage">
+                Hmm, that's not quite right. Try again, my love 💕
+            </div>
+        </div>
+
+        <div class="message-container" id="messageContainer">
+            <h1 class="message-title">FOR MY WIFE🌹</h1>
+            <div class="decorative-line"></div>
+            <div class="message-content">
+                Hi! so first of all, congratulations because you have officially become one of the reason why 
+                I smiled at phone HAHAHHAHAHAHHAHAHAHAHHA. I hope your happy with your achievement
+                wala lang gusto lang kitang gulohin today with this very important and totally unnecessary letter.
+
+                <br><br>
+                Anyway, mahal na mahal kita baby and I like you very very very very much HAHHAHAHAHHA yes ikaw, alangan
+                namang sa iba and I've been thinking about whether I should tell you or just keep pretending 
+                na normal lang ang lahat so here I am, taking a risk and possibly embarrasing cuz hindi ko masabi sa'yo sa chat 
+                kaya dito ko nalang sasabihin by making a website only just for you, my love.
+
+                <br><br>
+                hindi ko alam kung pano sabihin to in an idk way without being awkward, so let's just keep it simple. I honestly
+                enjoy talking you hende ko alam kung anong meron sa'yo but somehow, you caught my attention. Like out of all the people
+                I could've liked, bakit ikaw pa talaga? ang dami namang choices eh, pero ikaw talaga? interesting taste self HAHAHHAHAHAHHAHAHAHAHHA
+                but baby, I'm falling more and more inlove with you every day, and honestly hende ko alam like how tf did you do that?
+                like ano bang ginawa mo? what kind of witchcraft did you use on me? may magic ka ba or sadyang mahina lang talaga ako pag dating
+                sa'yo? HAHHAHAHAHHA
+
+                <br><br>
+                but seriously, gusto kita, gustong gusto and as time goes by, my feelings for you just keep growing and I find
+                myself looking forward to talk to you, knowing more about you.. it's honestly funny how someone can make an ordinary
+                day feel a little better just by simply existing. grabe, lakas mo sah
+
+                <br><br>
+                and uhhh, just wanted to ask you something, and I hope you take this seriously for once kay I'm actually trying to be serious
+                here..
+                
+                <br><br>
+                baby, would you allow me to court you? like, officially asking to pursue you..hehe and about me asking If pwede po ba? 
+                I just want you to know na you don't have to give me an answer right away, omki? I'm not expecting you to decide immediately,
+                and I don't want you to feel pressured just because I finally gathered the courage to ask. Take all the time you need because I want
+                you to be  comfortable with this, too.
+
+                <br><br>
+                I wanted to ask cuz I genuinely want to and to get to know you better. hindi ko alam kung tama ba itong ginawa ko neng honesly, This
+                is my first time asking someone if I can court them HASHHASHHAS hindi ko alam kung pano talaga sabihin kaya dito nalang HEHEHHSHHSHSH
+                if there's a manual for this, please send me a copy because apparently, I'm doing this without a guide..
+
+                <br><br>
+                and please don't feel like you owe me a yes just because I'm willing to wait there's no rush oki? I want your answer
+                to be something you genuinely want and I want us to enjoy getting to know without having to feel na merong deadline i2 
+                HASHHASHHASHHA
+
+                <br><br>
+                so yeah, that's pretty much it. I'm falling for you, and I'd really love the chance to show you just how much I mean that.
+                for now, I'll just do my part and let you take your time. I love you, and you're like the moon to me, quitely beautiful, comforting,
+                someone I never get tired of looking at, even from afar.
+
+                <br><br>
+                Hopefully, I did this right, if not ok bye. hshshhs well, atleast I tired. first time manliligaw privileges, please. HAHAHHAHAHAHHAHAHA
+            
+            <div class="signature"> I love you. 💖</div>
+        </div>
+    </div>
+
+    <script>
+        const passwordForm = document.getElementById('passwordForm');
+        const passwordInput = document.getElementById('passwordInput');
+        const errorMessage = document.getElementById('errorMessage');
+        const passwordContainer = document.getElementById('passwordContainer');
+        const messageContainer = document.getElementById('messageContainer');
+        
+        const correctPassword = 'walalang';
+        
+        // Add petals animation
+        function createPetal() {
+            const petals = ['🌸', '🌺', '🌹'];
+            const petal = document.createElement('div');
+            petal.className = 'petal';
+            petal.textContent = petals[Math.floor(Math.random() * petals.length)];
+            petal.style.left = Math.random() * 100 + '%';
+            petal.style.animationDuration = (Math.random() * 3 + 5) + 's';
+            petal.style.animationDelay = Math.random() * 2 + 's';
+            
+            document.querySelector('.petals').appendChild(petal);
+            
+            setTimeout(() => {
+                petal.remove();
+            }, 8000);
+        }
+        
+        // Create petals periodically
+        setInterval(createPetal, 2000);
+        
+        passwordForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const enteredPassword = passwordInput.value.trim();
+            
+            if (enteredPassword === correctPassword) {
+                // Correct password - show message
+                passwordContainer.style.display = 'none';
+                messageContainer.style.display = 'block';
+                messageContainer.classList.add('fade-in');
+                
+                // Expand container for message
+                const container = document.querySelector('.container');
+                container.style.maxWidth = '950px';
+                
+            } else {
+                // Wrong password - show error
+                errorMessage.classList.add('show');
+                passwordInput.value = '';
+                passwordInput.style.borderColor = '#c7155d';
+                
+                // Reset error after 3 seconds
+                setTimeout(() => {
+                    errorMessage.classList.remove('show');
+                    passwordInput.style.borderColor = '#f0f0f0';
+                }, 3500);
+                
+                // Shake animation
+                passwordInput.classList.add('shake');
+                setTimeout(() => {
+                    passwordInput.classList.remove('shake');
+                }, 500);
+            }
+        });
+        
+        // Focus on password input when page loads
+        window.addEventListener('load', function() {
+            passwordInput.focus();
+        });
+        
+        // Handle Enter key
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                passwordForm.dispatchEvent(new Event('submit'));
+            }
+        });
+        
+        // Add entrance animation
+        window.addEventListener('load', function() {
+            document.querySelector('.container').classList.add('fade-in');
+        });
+    </script>
+</body>
+</html>
